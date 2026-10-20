@@ -1,0 +1,137 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchoTwin AI</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2ff;
+            color: #1e293b;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px #00000015;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4f46e5;
+        }
+
+        p {
+            text-align: center;
+            color: #64748b;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            margin-top: 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 22px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>EchoTwin AI</h1>
+        <p>AI-Powered User Friction Prediction</p>
+
+        <form id="sessionForm">
+            <label>Number of Clicks</label>
+            <input id="clicks" type="number" min="0" value="5" required>
+
+            <label>Number of Errors</label>
+            <input id="errors" type="number" min="0" value="1" required>
+
+            <label>Time Taken (seconds)</label>
+            <input id="time_seconds" type="number" min="0" value="60" required>
+
+            <label>Number of Backtracks</label>
+            <input id="backtracks" type="number" min="0" value="1" required>
+
+            <label>Help Requests</label>
+            <input id="help_requests" type="number" min="0" value="0" required>
+
+            <label>Task Completed?</label>
+            <select id="task_completed">
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+
+            <button type="submit">Predict User Friction</button>
+        </form>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("sessionForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const result = document.getElementById("result");
+            result.textContent = "Analyzing...";
+
+            const data = {
+                clicks: document.getElementById("clicks").value,
+                errors: document.getElementById("errors").value,
+                time_seconds: document.getElementById("time_seconds").value,
+                backtracks: document.getElementById("backtracks").value,
+                help_requests: document.getElementById("help_requests").value,
+                task_completed: document.getElementById("task_completed").value
+            };
+
+            try {
+                const response = await fetch("/predict", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(data)
+                });
+
+                const answer = await response.json();
+                result.textContent = response.ok
+                    ? "Prediction: " + answer.result
+                    : "Prediction failed. Please check the Flask terminal.";
+            } catch (error) {
+                result.textContent = "Cannot connect to the server. Start Flask first.";
+            }
+        });
+    </script>
+</body>
+</html>
+```
